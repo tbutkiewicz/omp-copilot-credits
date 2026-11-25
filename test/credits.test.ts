@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { computeView, type DisplayOptions, formatStatus } from "../src/format";
+import { computeView, type DisplayOptions, formatStatus, isNerdFont } from "../src/format";
 import { parseCopilotUser, parseQuotaHeaders, type QuotaSnapshot, selectBucket } from "../src/quota";
 import { DEFAULT_SETTINGS, resolveSettings } from "../src/settings";
 import { mergeSnapshot, readStore, recordSnapshot, type StoreState } from "../src/store";
@@ -188,4 +188,13 @@ describe("shared store", () => {
 		await Bun.write(file, "{not json");
 		expect(await readStore(file)).toEqual({ version: 1, history: [] });
 	});
+});
+
+describe("theme symbol preset detection", () => {
+    it("reads symbols.preset and falls back to getSymbolPreset", () => {
+        expect(isNerdFont({ symbols: { preset: "nerd" } } as never)).toBe(true);
+        expect(isNerdFont({ symbols: { preset: "unicode" } } as never)).toBe(false);
+        expect(isNerdFont({ getSymbolPreset: () => "nerd" } as never)).toBe(true);
+        expect(isNerdFont({} as never)).toBe(false);
+    });
 });

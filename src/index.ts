@@ -9,7 +9,7 @@
  */
 import type { ExtensionAPI, ExtensionContext } from "@oh-my-pi/pi-coding-agent";
 import { getPluginSettings } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/loader";
-import { computeView, formatStatus, usedCredits } from "./format";
+import { computeView, formatStatus, isNerdFont, usedCredits } from "./format";
 import { parseCopilotUser, parseQuotaHeaders, type QuotaSnapshot, selectBucket } from "./quota";
 import { type CreditsSettings, DEFAULT_SETTINGS, resolveSettings } from "./settings";
 import { defaultStorePath, readStore, recordSnapshot, type StoreState } from "./store";
@@ -69,7 +69,7 @@ export default function copilotCredits(pi: ExtensionAPI) {
 			return;
 		}
 		const view = computeView(bucket, lastState, Date.now());
-		ctx.ui.setStatus(STATUS_KEY, formatStatus(view, { ...settings, nerdFont: ctx.ui.theme.getSymbolPreset() === "nerd" }));
+        ctx.ui.setStatus(STATUS_KEY, formatStatus(view, { ...settings, nerdFont: isNerdFont(ctx.ui.theme) }));
 	};
 
 	const refresh = async (ctx: ExtensionContext): Promise<void> => {
@@ -134,7 +134,7 @@ export default function copilotCredits(pi: ExtensionAPI) {
 					...DEFAULT_SETTINGS,
 					showReset: true,
 					numberStyle: "exact",
-					nerdFont: ctx.ui.theme.getSymbolPreset() === "nerd",
+                    nerdFont: isNerdFont(ctx.ui.theme),
 				}),
 				"info",
 			);

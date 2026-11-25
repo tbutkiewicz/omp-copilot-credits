@@ -110,3 +110,8 @@ export function formatStatus(view: CreditsView, options: DisplayOptions): string
 	if (options.showReset && view.resetAt !== undefined) parts.push(`↻ ${formatReset(view.resetAt)}`);
 	return parts.length > 0 ? `${icon} ${parts.join(" · ")}` : icon;
 }
+
+export function isNerdFont(theme: unknown): boolean {
+    const t = theme as { symbols?: { preset?: string }; getSymbolPreset?: () => string } | undefined;
+    return (t?.symbols?.preset ?? t?.getSymbolPreset?.()) === "nerd";
+}
